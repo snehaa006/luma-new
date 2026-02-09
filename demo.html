@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Luma Voice Assistant</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .container {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        max-width: 600px;
+      }
+
+      h1 {
+        color: white;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .demo-section {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 30px;
+        margin: 20px 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .demo-section h2 {
+        color: #00ff88;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+      }
+
+      .command-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .command-card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .command-card:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .command-card h3 {
+        color: #00ff88;
+        margin: 0 0 10px 0;
+        font-size: 1.1em;
+      }
+
+      .command-card p {
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0;
+        font-size: 0.9em;
+      }
+
+      .activate-btn {
+        background: linear-gradient(45deg, #00ff88, #00cc6a);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 1.2em;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+        margin: 20px;
+      }
+
+      .activate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 255, 136, 0.6);
+      }
+
+      .status-display {
+        color: white;
+        font-size: 1.1em;
+        margin: 20px 0;
+        padding: 15px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .instructions {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.1em;
+        line-height: 1.6;
+        margin: 20px 0;
+      }
+
+      .warning {
+        background: rgba(255, 193, 7, 0.2);
+        border: 1px solid rgba(255, 193, 7, 0.5);
+        border-radius: 10px;
+        padding: 15px;
+        margin: 20px 0;
+        color: #ffc107;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🤖 Luma Voice Assistant</h1>
+
+      <div class="instructions">
+        <p>
+          Say <strong>"Hey Luma"</strong> to activate voice commands on any
+          webpage!
+        </p>
+      </div>
+
+      <div class="warning">
+        <strong>⚠️ Important:</strong> This assistant requires microphone access
+        and works best on YouTube, Google, and other interactive websites.
+      </div>
+
+      <button class="activate-btn" onclick="initializeVoiceAssistant()">
+        🎙️ Initialize Voice Assistant
+      </button>
+
+      <div class="status-display" id="main-status">
+        Click the button above to start
+      </div>
+
+      <div class="demo-section">
+        <h2>🎬 YouTube Commands</h2>
+        <div class="command-list">
+          <div class="command-card">
+            <h3>Search</h3>
+            <p>"Search for cats"<br />"Search YouTube music"</p>
+          </div>
+          <div class="command-card">
+            <h3>Video Control</h3>
+            <p>"Play video"<br />"Pause"<br />"Skip 30 seconds"</p>
+          </div>
+          <div class="command-card">
+            <h3>Click Videos</h3>
+            <p>"Click first video"<br />"Click second video"</p>
+          </div>
+          <div class="command-card">
+            <h3>Volume</h3>
+            <p>"Volume up"<br />"Volume down"<br />"Mute"</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h2>🌐 Navigation Commands</h2>
+        <div class="command-list">
+          <div class="command-card">
+            <h3>Page Control</h3>
+            <p>"Scroll down"<br />"Go to top"<br />"Go back"</p>
+          </div>
+          <div class="command-card">
+            <h3>Reading</h3>
+            <p>"Read page"<br />"Read headings"<br />"Summarize page"</p>
+          </div>
+          <div class="command-card">
+            <h3>Navigation Mode</h3>
+            <p>"Show links"<br />"Next item"<br />"Click"</p>
+          </div>
+          <div class="command-card">
+            <h3>Search</h3>
+            <p>"Search for something"<br />"Find information"</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h2>💡 How to Use</h2>
+        <div style="text-align: left; color: rgba(255, 255, 255, 0.9)">
+          <p><strong>1.</strong> Click "Initialize Voice Assistant" above</p>
+          <p><strong>2.</strong> Allow microphone access when prompted</p>
+          <p><strong>3.</strong> Say "Hey Luma" to activate</p>
+          <p><strong>4.</strong> Give your command (e.g., "Search for cats")</p>
+          <p><strong>5.</strong> The assistant will execute and respond</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let isAwake = false;
+      let isListening = false;
+      let hasAnnouncedMicReady = false;
+      let currentElements = [];
+      let isNavigationMode = false;
+      let currentFocusIndex = 0;
+      let sessionStarted = false;
+      let consecutiveFailures = 0;
+
+      const wakePhrases = [
+        "hey luma",
+        "hey looma",
+        "hey luna",
+        "hey luma ai",
+        "luma",
+        "looma",
+        "luna",
+        "luma ai",
+        "hey assistant",
+        "hey voice",
+        "assistant",
+        "voice",
+        "hey",
+        "hey there",
+        "listen",
+        "wake up",
+        "activate",
+        "computer",
+        "ai",
+        "start",
+      ];
+
+      let wakeRecognizer, commandRecognizer, typeRecognizer, actionRecognizer;
+
+      // Enhanced Status Bar with Visual Feedback
+      function createStatusBar() {
+        const bar = document.createElement("div");
+        bar.id = "voice-status-bar";
+        bar.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                z-index: 999999;
+                padding: 12px 16px;
+                background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+                color: #00ff88;
+                border-radius: 12px;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                font-size: 14px;
+                font-weight: 500;
+                box-shadow: 0 8px 32px rgba(0, 255, 136, 0.3);
+                border: 1px solid rgba(0, 255, 136, 0.2);
+                backdrop-filter: blur(10px);
+                transition: all 0.3s ease;
+                min-width: 200px;
+            `;
+        bar.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div id="status-icon" style="font-size: 16px;">🤖</div>
+                    <div id="status-text">Initializing...</div>
+                </div>
+            `;
+        document.body.appendChild(bar);
+        return bar;
+      }
+
+      let statusBar;
+      function updateStatusBar(text, icon = "🤖") {
+        if (!statusBar) return;
+        const iconEl = statusBar.querySelector("#status-icon");
+        const textEl = statusBar.querySelector("#status-text");
+        if (iconEl) iconEl.textContent = icon;
+        if (textEl) textEl.textContent = text;
+        console.log("📢 Status:", text);
+
+        // Update main status display
+        const mainStatus = document.getElementById("main-status");
+        if (mainStatus) {
+          mainStatus.textContent = text;
+        }
+      }
+
+      // Visual Highlighting System
+      function highlightElement(element, color = "#00ff88") {
+        if (!element) return;
+        element.style.outline = `3px solid ${color}`;
+        element.style.outlineOffset = "2px";
+        element.style.backgroundColor = `${color}20`;
+        element.style.transition = "all 0.3s ease";
+      }
+
+      function clearHighlights() {
+        document.querySelectorAll("*").forEach((el) => {
+          el.style.outline = "";
+          el.style.outlineOffset = "";
+          el.style.backgroundColor = "";
+        });
+      }
+
+      // Smart Element Detection
+      function getInteractiveElements() {
+        const selectors = [
+          "a[href]",
+          "button",
+          "input",
+          "textarea",
+          "select",
+          '[role="button"]',
+          '[role="link"]',
+          '[role="tab"]',
+          "[onclick]",
+          "[tabindex]",
+          ".btn",
+          ".button",
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6",
+          '[data-testid*="button"]',
+          '[data-testid*="link"]',
+          // YouTube specific selectors
+          "#video-title",
+          ".ytd-video-renderer",
+          ".ytd-rich-item-renderer",
+          ".ytp-play-button",
+          ".ytp-fullscreen-button",
+          ".ytp-volume-slider",
+        ];
+
+        return Array.from(document.querySelectorAll(selectors.join(", ")))
+          .filter((el) => {
+            const rect = el.getBoundingClientRect();
+            return (
+              rect.width > 0 &&
+              rect.height > 0 &&
+              window.getComputedStyle(el).visibility !== "hidden" &&
+              window.getComputedStyle(el).display !== "none"
+            );
+          })
+          .sort((a, b) => {
+            const aRect = a.getBoundingClientRect();
+            const bRect = b.getBoundingClientRect();
+            return aRect.top - bRect.top || aRect.left - bRect.left;
+          });
+      }
+
+      // Enhanced Speech with Emotion
+      function speak(text, callback, emotion = "neutral") {
+        console.log("🗣️ Speaking:", text);
+        updateStatusBar(text, "🔊");
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+        utterance.rate = 0.9;
+        utterance.pitch =
+          emotion === "success" ? 1.2 : emotion === "error" ? 0.8 : 1.0;
+        utterance.volume = 0.8;
+
+        utterance.onend = () => {
+          updateStatusBar(
+            isAwake
+              ? "Listening for command..."
+              : "Say 'Hey Luma' to activate",
+            isAwake ? "🎤" : "😴"
+          );
+          callback && callback();
+        };
+
+        speechSynthesis.cancel();
+        speechSynthesis.speak(utterance);
+      }
+
+      // Optimized Speech Recognition
+      function createRecognizer(onResult, onEnd) {
+        const recog = new webkitSpeechRecognition();
+        recog.continuous = false;
+        recog.interimResults = false;
+        recog.lang = "en-US";
+        recog.maxAlternatives = 1;
+
+        recog.onresult = (event) => {
+          const text = event.results[0][0].transcript.trim().toLowerCase();
+          console.log("🎧 Heard:", text);
+          updateStatusBar("Heard: " + text, "🎧");
+          onResult(text);
+        };
+
+        recog.onstart = () => {
+          isListening = true;
+          consecutiveFailures = 0;
+          updateStatusBar("Listening...", "🎙️");
+          console.log("🎤 Mic started");
+        };
+
+        recog.onerror = (e) => {
+          console.warn("❌ Error:", e.error);
+          consecutiveFailures++;
+
+          if (e.error === "aborted") {
+            return;
+          }
+
+          if (e.error === "no-speech") {
+            updateStatusBar("No speech detected, listening again...", "❓");
+          } else if (e.error === "network") {
+            updateStatusBar("Network error, retrying...", "⚠️");
+          } else {
+            updateStatusBar("Mic error: " + e.error, "⚠️");
+          }
+
+          if (consecutiveFailures < 3) {
+            setTimeout(() => {
+              if (!isListening) {
+                if (isAwake) listenForCommand();
+                else listenForWakeWord();
+              }
+            }, 1000);
+          } else {
+            speak("Multiple mic errors. Please refresh the page.");
+          }
+        };
+
+        recog.onend = () => {
+          isListening = false;
+          console.log("🎤 Mic ended");
+          setTimeout(() => {
+            if (!isListening) {
+              if (isAwake) listenForCommand();
+              else listenForWakeWord();
+            }
+          }, 100);
+        };
+
+        return recog;
+      }
+
+      // Wake Word Detection
+      function listenForWakeWord() {
+        if (isListening) return;
+
+        updateStatusBar(
+          sessionStarted
+            ? "Ready - Say 'Hey Luma'"
+            : "Say 'Hey Luma' to activate",
+          "😴"
+        );
+
+        wakeRecognizer = createRecognizer((text) => {
+          console.log("🔍 Checking wake phrase:", text);
+
+          const isWakePhrase = wakePhrases.some((phrase) => {
+            if (text.includes(phrase)) return true;
+
+            const phraseWords = phrase.split(" ");
+            const textWords = text.split(" ");
+            const matchCount = phraseWords.filter((word) =>
+              textWords.some(
+                (textWord) => textWord.includes(word) || word.includes(textWord)
+              )
+            ).length;
+
+            return matchCount >= Math.ceil(phraseWords.length * 0.5);
+          });
+
+          if (isWakePhrase) {
+            console.log("✅ Wake phrase detected!");
+            isAwake = true;
+            sessionStarted = true;
+            speak(
+              "Ready! What can I help you with?",
+              () => listenForCommand(),
+              "success"
+            );
+          } else {
+            console.log("❌ Not a wake phrase");
+          }
+        });
+
+        try {
+          wakeRecognizer.start();
+        } catch (e) {
+          console.warn("Wake start error:", e);
+        }
+      }
+
+      // Command Processing
+      function handleCommand(cmd) {
+        cmd = cmd.toLowerCase();
+
+        setTimeout(() => {
+          isAwake = false;
+        }, 500);
+
+        if (cmd.includes("hello") || cmd.includes("hi")) {
+          speak("Hello! How can I help you today?");
+        } else if (cmd.includes("time")) {
+          const now = new Date();
+          speak(`The time is ${now.toLocaleTimeString()}`);
+        } else if (cmd.includes("date")) {
+          const now = new Date();
+          speak(`Today is ${now.toLocaleDateString()}`);
+        } else if (cmd.includes("help")) {
+          speak(
+            "I can help you navigate websites, search for content, read pages, and control media. Try saying 'search for something' or 'read page'."
+          );
+        } else if (cmd.includes("add more")) {
+          speak("Adding more. Go ahead.", () => listenForQuery(true));
+        } else if (cmd.includes("test")) {
+          speak("Voice assistant is working perfectly!");
+        } else {
+          speak(
+            "I heard you say: " +
+              cmd +
+              ". This is a demo - full functionality works on actual websites like YouTube and Google."
+          );
+        }
+      }
+
+      function listenForCommand() {
+        if (isListening) return;
+        commandRecognizer = createRecognizer((cmd) => {
+          handleCommand(cmd);
+        });
+
+        try {
+          commandRecognizer.start();
+        } catch (e) {
+          console.warn("Command start error:", e);
+        }
+      }
+
+      // Add activation button functionality
+      function addActivationButton() {
+        const button = document.createElement("button");
+        button.id = "voice-activation-btn";
+        button.innerHTML = "🎙️ Activate Voice";
+        button.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 999999;
+                padding: 12px 20px;
+                background: linear-gradient(45deg, #00ff88, #00cc6a);
+                color: white;
+                border: none;
+                border-radius: 25px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+                transition: all 0.3s ease;
+            `;
+
+        button.onclick = () => {
+          if (!sessionStarted) {
+            initializeVoiceAssistant();
+          } else {
+            isAwake = true;
+            speak("Voice activated! What can I help you with?", () =>
+              listenForCommand()
+            );
+          }
+        };
+
+        document.body.appendChild(button);
+      }
+
+      // Initialize function
+      function initializeVoiceAssistant() {
+        if (!("webkitSpeechRecognition" in window)) {
+          alert(
+            "Speech recognition not supported in this browser. Please use Chrome or Edge."
+          );
+          return;
+        }
+
+        console.log("🚀 Initializing Luma Voice Assistant...");
+
+        // Create status bar if it doesn't exist
+        if (!statusBar) {
+          statusBar = createStatusBar();
+        }
+
+        updateStatusBar("Starting voice assistant...", "🔄");
+
+        // Add activation button for other pages
+        addActivationButton();
+
+        // Start listening for wake word
+        setTimeout(() => {
+          listenForWakeWord();
+          updateStatusBar("Ready! Say 'Hey Luma' to activate", "😴");
+          speak(
+            "Luma initialized! Say 'Hey Luma' to activate voice commands.",
+            null,
+            "success"
+          );
+        }, 1000);
+      }
+
+      // Auto-initialize when page loads
+      window.addEventListener("load", () => {
+        console.log("🎯 Luma Voice Assistant loaded");
+        updateStatusBar("Click 'Initialize Voice Assistant' to start", "🎯");
+      });
+
+      // Cleanup on page unload
+      window.addEventListener("beforeunload", () => {
+        if (wakeRecognizer) wakeRecognizer.abort();
+        if (commandRecognizer) commandRecognizer.abort();
+        if (typeRecognizer) typeRecognizer.abort();
+        speechSynthesis.cancel();
+      });
+    </script>
+  </body>
+</html>
