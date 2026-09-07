@@ -5,11 +5,12 @@ const {
 } = require('docx');
 const fs = require('fs');
 
-const NAVY = '10305C';
-const TEAL = '0E7C7B';
-const GREY = '444444';
-const LIGHT = 'EDF3F8';
-const BAND = 'F5F7FA';
+// Monochrome palette — black, white and greys only.
+const NAVY = '000000';   // headings / emphasis
+const TEAL = '000000';   // rules, sub-headings
+const GREY = '1A1A1A';   // body text
+const LIGHT = 'E4E4E4';  // strong highlight band
+const BAND = 'F2F2F2';   // alternating row band
 
 const PW = 9360; // usable width in DXA for A4 with 1" margins approx
 
@@ -115,12 +116,12 @@ function TBL(widths, rows) {
     width: { size: widths.reduce((a, b) => a + b, 0), type: WidthType.DXA },
     layout: TableLayoutType.FIXED,
     borders: {
-      top: { style: BorderStyle.SINGLE, size: 4, color: 'BFCEDD' },
-      bottom: { style: BorderStyle.SINGLE, size: 4, color: 'BFCEDD' },
-      left: { style: BorderStyle.SINGLE, size: 4, color: 'BFCEDD' },
-      right: { style: BorderStyle.SINGLE, size: 4, color: 'BFCEDD' },
-      insideHorizontal: { style: BorderStyle.SINGLE, size: 4, color: 'BFCEDD' },
-      insideVertical: { style: BorderStyle.SINGLE, size: 4, color: 'BFCEDD' }
+      top: { style: BorderStyle.SINGLE, size: 4, color: '9A9A9A' },
+      bottom: { style: BorderStyle.SINGLE, size: 4, color: '9A9A9A' },
+      left: { style: BorderStyle.SINGLE, size: 4, color: '9A9A9A' },
+      right: { style: BorderStyle.SINGLE, size: 4, color: '9A9A9A' },
+      insideHorizontal: { style: BorderStyle.SINGLE, size: 4, color: '9A9A9A' },
+      insideVertical: { style: BorderStyle.SINGLE, size: 4, color: '9A9A9A' }
     },
     rows
   });
@@ -564,6 +565,22 @@ const doc = new Document({
   creator: 'Luma Team',
   title: 'Luma — Smart Accessibility Suite: Project Proposal',
   description: 'Stage 1 Open Applications project proposal for Luma Smart Accessibility Suite',
+  styles: {
+    default: {
+      document: { run: { font: 'Calibri', color: GREY } },
+      heading1: { run: { color: NAVY, bold: true } },
+      heading2: { run: { color: NAVY, bold: true } },
+      heading3: { run: { color: NAVY, bold: true } },
+      heading4: { run: { color: NAVY, bold: true } },
+      heading5: { run: { color: NAVY, bold: true } },
+      heading6: { run: { color: NAVY, bold: true } },
+      title: { run: { color: NAVY, bold: true } }
+    },
+    characterStyles: [
+      { id: 'Hyperlink', name: 'Hyperlink', basedOn: 'DefaultParagraphFont',
+        run: { color: NAVY, underline: {} } }
+    ]
+  },
   numbering: {
     config: [
       {
